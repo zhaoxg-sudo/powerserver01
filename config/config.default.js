@@ -22,6 +22,12 @@ module.exports = appInfo => {
   const userConfig = {
     // myAppName: 'egg',
   };
+  exports.io = {
+    init: { }, // passed to engine.io
+    namespace: {
+      '/': { },
+       },
+  };
 
   return {
     ...config,

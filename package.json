@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "egg": "^2.15.1",
-    "egg-scripts": "^2.11.0"
+    "egg-scripts": "^2.11.0",
+    "egg-socket.io": "^4.1.6"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -23,9 +24,9 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-power01",
+    "start": "egg-scripts start --daemon --title=egg-server-power01  --sticky",
     "stop": "egg-scripts stop --title=egg-server-power01",
-    "dev": "egg-bin dev",
+    "dev": "egg-bin dev  --sticky",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
