@@ -27,10 +27,14 @@ class HomeController extends Controller {
      
 
     //end db 
+    
+
     const { ctx } = this;
     //ctx.body = 'hi, egg';
     ctx.body = data.rows
   }
+  
 }
+
 
 module.exports = HomeController;
