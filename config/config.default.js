@@ -22,6 +22,20 @@ module.exports = appInfo => {
   const userConfig = {
     // myAppName: 'egg',
   };
+  config.security = {
+    csrf: {
+        enable: false,
+        ignoreJSON: false, 
+    },
+    domainWhiteList: ['http://power.eyeplus.com','http://power.eyeplus.com:7001']
+};
+  config.cors = {
+    enable: true,
+    package: 'egg-cors',
+    origin: '*',
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
+};
+
   config.io = {
     init: { }, // passed to engine.io
     namespace: {

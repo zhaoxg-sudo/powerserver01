@@ -9,3 +9,7 @@ module.exports.io = {
   enable: true,
   package: 'egg-socket.io',
 };
+module.exports.cors = {
+  enable: true,
+  package: 'egg-cors',
+};
