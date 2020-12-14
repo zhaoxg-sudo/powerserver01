@@ -2,6 +2,9 @@ const Service = require('egg').Service;
 const { Pool, Client} = require('pg')
 const dgram = require('dgram')
 const server = dgram.createSocket('udp4');
+let _this = this;
+let alarmFiredFlag = false;
+let alarmTable = [];
 // 绑定本机的ip地址
 server.bind(7000, '0.0.0.0');
 // 开启socket 监听服务
@@ -38,8 +41,27 @@ let startRecDataFlag = 1
              let n3 = msg.toString('hex').slice(12,14);
              number = parseInt((n3+n2+n1+n0),16);
              console.log("消息的号码为："+number);
-             
            
+            // insert into alarm table or alarm DB
+            // connect db
+            /* const client = new Client({
+                user: 'postgres',
+                host: '127.0.0.1',
+                database: 'power',
+                password: 'shyh2017',
+                port: 5432,
+            })
+            client.connect()
+            // insert into alarm DB
+            client.query('SELECT * from power_device_local').then( (data) => {
+            comsole.log(data)
+            })
+         
+            client.end()*/
+             
+            // end db 
+            // reset alarm flag
+
             break;
         case 0x11://设置开关量状态-应答处理
                 

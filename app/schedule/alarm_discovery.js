@@ -15,6 +15,7 @@ class AlarmDiscovery extends Subscription {
     if (alarmNum >10000 )  alarmNum = 0
     console.log("alarm自动更新定时器，时间到。发送alarm msg");
     this.ctx.app.io.emit("alarm","电源发生报警"+ alarmNum.toString())
+    
   }
 }
 
