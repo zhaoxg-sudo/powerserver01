@@ -17,24 +17,66 @@ class HomeController extends Controller {
     // the pool with emit an error on behalf of any idle clients
     // it contains if a backend error or network partition happens
       client.connect()
-    // callback - checkout a client
+         
+      let  data = await client.query('SELECT * from power_station_tree')
       
-      let  data = await client.query('SELECT * from power_device_local')
-      //.then((res)=>{
-      //  this.data = res.rows
-        client.end()
-      //})
-     
-
-    //end db 
+      client.end()
+    //end db
     
-
     const { ctx } = this;
     //ctx.body = 'hi, egg';
     ctx.body = data.rows
   }
-  
+  async treeaddnode() {
+    //connect db
+    const client = new Client({
+      user: 'postgres',
+      host: '127.0.0.1',
+      database: 'power',
+      password: 'shyh2017',
+      port: 5432,
+    })
+    console.log("enter treeaddnode router", this.ctx.request.body)
+    client.connect()
+    let catalogid = this.ctx.request.body.catalogid
+    let parentid = this.ctx.request.body.parentid
+    let label = this.ctx.request.body.label
+    let stationtype = this.ctx.request.body.stationtype
+    let commtype = this.ctx.request.body.commtype
+    let protocoltype = this.ctx.request.body.protocoltype
+    let positioninfo = this.ctx.request.body.positioninfo
+    let addinfo = this.ctx.request.body.addinfo
+    let ipaddress = this.ctx.request.body.ipaddress
+    let ipport = this.ctx.request.body.ipport
+    let childrennum = this.ctx.request.body.childrennum
+    console.log("catalogid=", catalogid)
+    let data = {}
+    data.result = {}
+    let alreay_exist = await client.query('SELECT * from power_station_tree where catalogid =' + "'" + catalogid + "'")
+    if (alreay_exist > 0) {
+      console.log('数据库中有该节点，catalogid =', catalogid)
+      data.code = 2
+      data.result ="树节点已存在"
+    } else {
+      await client.query('INSERT INTO power_station_tree (catalogid,parentid,label,stationtype,commtype,protocoltype,positioninfo,addinfo,ipaddress,ipport,childrennum) VALUES (' + 
+            "'" + catalogid + "'" + ","+
+            "'" + parentid +"'"+","+
+            "'" + label +"'"+","+
+            "'" + stationtype +"'"+","+
+            "'" + commtype +"'"+","+
+            "'" + protocoltype +"'"+","+
+            "'" + positioninfo + "'" + ","+
+            "'" + addinfo +"'"+","+
+            "'" + ipaddress +"'"+","+
+            "'" + ipport +"'"+","+
+            "'" + childrennum +"')")
+            console.log('数据库中没有该节点，添加树节点成功！！！！，catalogid =', catalogid)
+      data.code = 1
+      data.result = {catalogid:catalogid, parentid:parentid, label:label, stationtype:stationtype, commtype:commtype, protocoltype:protocoltype, positioninfo:positioninfo, addinfo:addinfo, ipaddress:ipaddress, ipport:ipport, childrennum:childrennum}
+    }
+    client.end()
+    this.ctx.body = data
+  }
 }
-
 
 module.exports = HomeController;
