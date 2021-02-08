@@ -53,10 +53,10 @@ class HomeController extends Controller {
     let data = {}
     data.result = {}
     let alreay_exist = await client.query('SELECT * from power_station_tree where catalogid =' + "'" + catalogid + "'")
-    if (alreay_exist > 0) {
-      console.log('数据库中有该节点，catalogid =', catalogid)
+    if (alreay_exist.rows.length > 0) {
+      console.log('数据库中已经有该节点，添加树节点失败????,catalogid =', catalogid)
       data.code = 2
-      data.result ="树节点已存在"
+      data.result ="树节点已存在，catalogid =" + catalogid
     } else {
       await client.query('INSERT INTO power_station_tree (catalogid,parentid,label,stationtype,commtype,protocoltype,positioninfo,addinfo,ipaddress,ipport,childrennum) VALUES (' + 
             "'" + catalogid + "'" + ","+
@@ -70,7 +70,7 @@ class HomeController extends Controller {
             "'" + ipaddress +"'"+","+
             "'" + ipport +"'"+","+
             "'" + childrennum +"')")
-            console.log('数据库中没有该节点，添加树节点成功！！！！，catalogid =', catalogid)
+            console.log('数据库中没有该节点，添加树节点成功！！！！，新增节点的catalogid =', catalogid)
       data.code = 1
       data.result = {catalogid:catalogid, parentid:parentid, label:label, stationtype:stationtype, commtype:commtype, protocoltype:protocoltype, positioninfo:positioninfo, addinfo:addinfo, ipaddress:ipaddress, ipport:ipport, childrennum:childrennum}
     }
