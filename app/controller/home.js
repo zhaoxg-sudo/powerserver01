@@ -77,6 +77,38 @@ class HomeController extends Controller {
     client.end()
     this.ctx.body = data
   }
+  // del node
+  async treedelnode() {
+    //connect db
+    const client = new Client({
+      user: 'postgres',
+      host: '127.0.0.1',
+      database: 'power',
+      password: 'shyh2017',
+      port: 5432,
+    })
+    console.log("enter treedelnode router", this.ctx.request.body)
+    client.connect()
+    let catalogid = this.ctx.request.body
+    console.log("catalogid=", catalogid)
+    let data = {}
+    data.result = []
+    for (let i = 0; i < catalogid.length; i++ ) {
+      let order = await client.query('DELETE from power_station_tree where catalogid =' + "'" + catalogid[i] + "'")
+      console.log(order)
+      if (order.rowCount > 0) {
+      console.log('数据库中树节点删除成功,catalogid =', catalogid[i])
+      data.code = 1
+      data.result.push("树节点删除成功，catalogid =" + catalogid[i])
+      } else {
+        console.log('数据库中树节点删除失败,catalogid =', catalogid[i])
+        data.code = 1
+        data.result.push("树节点删除失败，catalogid =" + catalogid[i])
+      }
+    }
+    client.end()
+    this.ctx.body = data
+  }
 }
 
 module.exports = HomeController;
