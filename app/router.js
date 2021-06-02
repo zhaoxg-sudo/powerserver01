@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {Egg.Application} app - egg application
+ * @param {Egg.Application} app - egg application V0.7 2021,06,02 zhaoxuegang released.
  */
 module.exports = app => {
   const { router, controller } = app;
