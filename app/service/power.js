@@ -43,7 +43,7 @@ let startRecDataFlag = 1
              let n2 = msg.toString('hex').slice(10,12);
              let n3 = msg.toString('hex').slice(12,14);
              number = parseInt((n3+n2+n1+n0),16);
-             console.log("设备端心跳消息的号码为："+number);
+             // console.log("设备端心跳消息的号码为："+number);
            
             // insert into alarm table or alarm DB
             // connect db
@@ -68,7 +68,7 @@ let startRecDataFlag = 1
             break;
         case 0x03://读取电源状态-应答处理
              let buf = new Buffer.from(rcmsg);
-             console.log("读取电源状态-应答处理，消息应答为：", buf); 
+             console.log("0x03读取电源状态-应答处理，消息应答为：", buf); 
              //取出消息序列号
              let s0 = rcmsg.toString('hex').slice(48,50);
               //console.log(msg.toString('hex').slice(6,8));
@@ -77,20 +77,23 @@ let startRecDataFlag = 1
               let s3 = rcmsg.toString('hex').slice(54,56);
               
               let token = parseInt(s0+s1+s2+s3,16);
+                      
+              console.log("收到设备端的应答数据为："+ buf.toString('hex'));
+              msg = buf.toString('hex')
               let returnMsg = {
                   token: token,
                   msg: msg
               }
-              console.log("应答消息的序列号======："+s0+s1+s2+s3);  
+              console.log("0x03应答消息的序列号======："+s0+s1+s2+s3);  
              const key = token;    
              const req = promisePool[key]
              if (req) {
                 req.resolve(returnMsg);
                 clearTimeout(req.timer);
-                console.log("=========收到正确应答消息========，token=", token);
+                console.log("=========0x03收到正确应答消息========，token=", token);
                 delete promisePool[key];
              } else {
-                    console.log("=========消息过期或不明消息========", token);
+                    console.log("=========0x03消息过期或不明消息========", token);
              }     
             break;
         case 0x12://读取开关量状态-应答处理
@@ -156,11 +159,11 @@ class PowerService extends Service {
             if (err) {
                 console.log('send data err');
             } else {
-                console.log("send data ok:", bytes);
+                console.log("send data length=:", bytes);
             }
         });
         // return promise
-        console.log("current token:", token);
+        console.log("send data current token=:", token);
         let timer = null
         let err = {
             token: token
