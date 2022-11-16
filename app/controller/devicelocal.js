@@ -378,6 +378,7 @@ class DevicelocalController extends Controller {
       client.connect()
       let thisctx = this.ctx
       let catalogid = this.ctx.params.catalogid
+      let id = this.ctx.params.id
       let token = 0
       let sendArr = []
       let ip
@@ -394,6 +395,8 @@ class DevicelocalController extends Controller {
         ip = deviceip
         console.log("return device ip = ", deviceip)
         let resultArr = [0xaa,4,6,0xff,0,0,0,1,0];
+        // 填入模块id
+        resultArr[3] = parseInt(id,16);
         // 计算checksum
         let checksum = 0;
         for (var i = 3; i < 8; i++) {

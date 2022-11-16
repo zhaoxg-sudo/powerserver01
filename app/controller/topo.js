@@ -5,28 +5,6 @@ const { Pool, Client } = require('pg')
 
 
 class TopoController extends Controller {
-  async index() {
-    //connect db
-    const client = new Client({
-      user: 'postgres',
-      host: '127.0.0.1',
-      database: 'power',
-      password: 'shyh2017',
-      port: 5432,
-    })
-    // the pool with emit an error on behalf of any idle clients
-    // it contains if a backend error or network partition happens
-      client.connect()
-         
-      let  data = await client.query('SELECT * from power_topo_item')
-      
-      client.end()
-    //end db
-    
-    const { ctx } = this;
-    //ctx.body = 'hi, egg';
-    ctx.body = data.rows
-  }
   // add catalog item
   async topoadditem() {
     //connect db
@@ -55,6 +33,38 @@ class TopoController extends Controller {
             console.log('数据库添加树topo节点成功！！！！，新增节点的catalogid =', catalogid)
     data.code = 1
     data.result = {catalogid:catalogid, itemdata:itemdata}
+    client.end()
+    this.ctx.body = data
+  }
+   // del topo item
+   async topodelitem() {
+    //connect db
+    const client = new Client({
+      user: 'postgres',
+      host: '127.0.0.1',
+      database: 'power',
+      password: 'shyh2017',
+      port: 5432,
+    })
+    console.log("enter topodelitem router", this.ctx.request.body)
+    client.connect()
+    let catalogid = this.ctx.request.body
+    console.log("catalogid=", catalogid)
+    let data = {}
+    data.result = []
+    for (let i = 0; i < catalogid.length; i++ ) {
+      let order = await client.query('DELETE from power_topo_catalog where catalogid =' + "'" + catalogid[i] + "'")
+      console.log(order)
+      if (order.rowCount > 0) {
+      console.log('数据库中topo节点删除成功,catalogid =', catalogid[i])
+      data.code = 1
+      data.result.push("topo节点删除成功，catalogid =" + catalogid[i])
+      } else {
+        console.log('数据库中topo节点删除失败,catalogid =', catalogid[i])
+        data.code = 2
+        data.result.push("topo节点删除失败，catalogid =" + catalogid[i])
+      }
+    }
     client.end()
     this.ctx.body = data
   }

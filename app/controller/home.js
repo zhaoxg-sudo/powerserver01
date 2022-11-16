@@ -5,7 +5,31 @@ const { Pool, Client } = require('pg')
 
 
 class HomeController extends Controller {
+  // get all node
   async index() {
+    //connect db
+    const client = new Client({
+      user: 'postgres',
+      host: '127.0.0.1',
+      database: 'power',
+      password: 'shyh2017',
+      port: 5432,
+    })
+    // the pool with emit an error on behalf of any idle clients
+    // it contains if a backend error or network partition happens
+      client.connect()
+         
+      let  data = await client.query('SELECT * from power_station_tree')
+      
+      client.end()
+    //end db
+    
+    const { ctx } = this;
+    //ctx.body = 'hi, egg';
+    ctx.body = data.rows
+  }
+  // get all children of this node
+  async childrenall() {
     //connect db
     const client = new Client({
       user: 'postgres',
@@ -102,7 +126,7 @@ class HomeController extends Controller {
       data.result.push("树节点删除成功，catalogid =" + catalogid[i])
       } else {
         console.log('数据库中树节点删除失败,catalogid =', catalogid[i])
-        data.code = 1
+        data.code = 2
         data.result.push("树节点删除失败，catalogid =" + catalogid[i])
       }
     }

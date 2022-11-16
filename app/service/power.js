@@ -14,6 +14,7 @@ server.bind(7300, '0.0.0.0');
 server.on("message", function (msg, rinfo) {
     let startRecDataFlag = 1
     let rcmsg = msg;
+    let ipinfo = rinfo;
     console.log('已接收到设备端发送的数据：' + msg.toString('hex'));
     console.log("设备端地址信息为：", rinfo);
     let commType = parseInt(msg.toString('hex').slice(2, 4), 16);
@@ -48,7 +49,6 @@ server.on("message", function (msg, rinfo) {
         checksum &=  0xff;//去掉可能有的高位
         // console.log('插入token 后的checksum=', checksum);
         msgRes[17] = checksum;
-
         let buf07 = new Buffer.from(msgRes);
         server.send(buf07, 0, buf07.length, rinfo.port, rinfo.address);
         console.log("给设备端报警上报发送确认的应答数据为：" + buf07.toString('hex'));
@@ -60,9 +60,19 @@ server.on("message", function (msg, rinfo) {
     if (startRecDataFlag) {
         switch (commType) {
             case 0x07://报警处理
-
-            console.log("0x07电源告警信息上报-应答处理，消息应答为：", rcmsg);
             let returnmsg07 = {}
+            let date = new Date()
+            let year = date.getFullYear() 
+            let month =  date.getMonth()+1 
+            let day = date.getDate()
+            let hour =  date.getHours() 
+            let minute = date.getMinutes()
+            let second = date.getSeconds()
+            let time = year + '-' + String(month >9?month:("0"+month)) + '-' + String(day >9?day:("0"+day)) + ' ' +  String(hour >9?hour:("0"+hour)) + ':' + String(minute >9?minute:("0"+minute)) + ':' + String(second >9?second:("0"+second)) 
+            returnmsg07.receivedtime = time
+            console.log("0x07电源告警信息上报-应答处理，消息应答为：", rcmsg);
+            // 填入报警源IP和port
+            returnmsg07.ipinfo = ipinfo
             //取出消息类型
             let type07 = rcmsg.toString('hex').slice(2, 4);
             returnmsg07.type = type07;
@@ -132,10 +142,10 @@ server.on("message", function (msg, rinfo) {
             console.log("收到设备端的告警上报hex解析为：");
             console.log(returnmsg07);
 
-            msg = JSON.stringify(returnmsg07)
+            // msg = JSON.stringify(returnmsg07)
             let res07 = {
                 token: token07,
-                msg: msg
+                msg: returnmsg07
             }
             console.log("0x07告警上报消息的序列号======：", token07);
             sTable.push(res07)
@@ -597,7 +607,7 @@ class PowerService extends Service {
         for (i = 0; i < sTable.length; i++) {
             numbersCopy[i] = sTable[i];
         }
-        console.log("getAlarmTable获取alarm表", numbersCopy);
+        // console.log("getAlarmTable获取alarm表", numbersCopy);
         //清空中间表和更新标志
         sTable = [];
         // tableIsChangded = false;
@@ -649,7 +659,7 @@ class PowerService extends Service {
                 timer = setTimeout(() => {
                     console.log('本次消息请求，超时未收到应答,token =', token)
                     reject(err)
-                }, 200)
+                }, 2000)
             }), new Promise((resolve, reject) => {
                 promisePool[token] = {
                     token,
@@ -660,7 +670,5 @@ class PowerService extends Service {
             })
         ])
     }
-
 }
 module.exports = PowerService;
-

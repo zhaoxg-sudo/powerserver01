@@ -6,10 +6,14 @@ type AnyClass = new (...args: any[]) => any;
 type AnyFunc<T = any> = (...args: any[]) => T;
 type CanExportFunc = AnyFunc<Promise<any>> | AnyFunc<IterableIterator<any>>;
 type AutoInstanceType<T, U = T extends CanExportFunc ? T : T extends AnyFunc ? ReturnType<T> : T> = U extends AnyClass ? InstanceType<U> : U;
+import ExportDb = require('../../../app/service/db');
 import ExportPower = require('../../../app/service/power');
+import ExportPowerac = require('../../../app/service/powerac');
 
 declare module 'egg' {
   interface IService {
+    db: AutoInstanceType<typeof ExportDb>;
     power: AutoInstanceType<typeof ExportPower>;
+    powerac: AutoInstanceType<typeof ExportPowerac>;
   }
 }
