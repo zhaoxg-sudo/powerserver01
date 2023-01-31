@@ -4,11 +4,20 @@ const Controller = require('egg').Controller;
 const { Pool, Client } = require('pg')
 
 class DevicelocalController extends Controller {
-
+  // deviceacgetparamfromagent
+  async getparamfromagentac() {
+    let catalogid = this.ctx.params.catalogid
+    let thisctx = this.ctx
+    console.log("getparamfromagentac--",catalogid);
+    let e = await this.ctx.service.powerac.getacparamfromagent(catalogid)
+    let receiveMsg = e
+    let code = 1   
+    let data = {result:receiveMsg,code:code, catalogid: catalogid}
+    thisctx.body = data 
+  }
   // deviceacgetparam
   async deviceacgetparam() {
-    
-    //connect db
+    // connect db
     const client = new Client({
         user: 'postgres',
         host: '127.0.0.1',
@@ -38,25 +47,23 @@ class DevicelocalController extends Controller {
         // ip = '192.168.1.171'
         let resultArr = [1,4,0,1,0,0x19,0x60,0];
         await this.ctx.service.powerac.sendMsgPromiseTimeout(0x04,resultArr,ip)
-                    .then((e)=>{
-                        console.log("deviceacgetparam:promise resolve 处理结束-----------------",e);
-                        let receiveMsg = e.msg
-                        let code = 1   
-                        data = {result:receiveMsg,code:code}
-                       
-                        thisctx.body = data 
-                    })
-                    .catch((e)=>{
-                        console.log("deviceacgetparam:promise reject 处理超时？？？？？？？？？",e);
-                        let receiveMsg = '设备应答超时，读取数据失败？？'
-                        let code = -1
-                        data = {result:receiveMsg,code:code}
-                       
-                        thisctx.body = data 
-                    })
+                .then((e)=>{
+                    console.log("deviceacgetparam:promise resolve 处理结束-----------------",e);
+                    let receiveMsg = e.msg
+                    let code = 1   
+                    data = {result:receiveMsg,code:code, catalogid: catalogid}
+                    thisctx.body = data 
+                })
+                .catch((e)=>{
+                    console.log("deviceacgetparam:promise reject 处理超时？？？？？？？？？",e);
+                    let receiveMsg = '设备应答超时，读取数据失败？？'
+                    let code = -1
+                    data = {result:receiveMsg,code:code}
+                    thisctx.body = data 
+                })
       }
       // close db
      client.end()
-    }
+  }
 }
 module.exports = DevicelocalController;

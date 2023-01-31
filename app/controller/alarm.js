@@ -77,11 +77,10 @@ class HomeController extends Controller {
     // it contains if a backend error or network partition happens
     client.connect()
     let request = this.ctx.request.body;
-    let alarmmudid = request.alarmmudid
     let alarmdetail = request.alarmdetail
+    let alarmmudid = request.alarmmudid
     console.log('postalarmfiredcheck', request)
-    // let  data = await clie?nt.query('SELECT * from power_alarm_current')
-    let  data = await client.query('SELECT * from power_alarm_current where alarmmudid =' + "'" +  alarmmudid + "'" + " and alarmdetail = " + "'" + alarmdetail + "'")
+    let  data = await client.query('SELECT * from power_alarm_current where alarmdetail =' + "'" +  alarmdetail + "'" + " and alarmmudid = " + "'" + alarmmudid + "'")
     client.end()
     //end db
     

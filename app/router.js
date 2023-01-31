@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {Egg.Application} app - egg application V0.84 2022,08,31 zhaoxuegang released.
+ * @param {Egg.Application} app - egg application V0.9 2022,11,23 zhaoxuegang released.
  */
 module.exports = app => {
   const { router, controller } = app;
@@ -42,5 +42,6 @@ module.exports = app => {
   router.get('/device/local/getpoweroff/:catalogid', controller.devicelocal.devicelocalgetpoweroff);
   router.post('/device/local/setpowerparam', controller.devicelocal.devicelocalsetpowerparam);
   router.get('/device/local/getacparam/:catalogid', controller.deviceac.deviceacgetparam);
+  router.get('/device/local/getacparamfromagent/:catalogid', controller.deviceac.getparamfromagentac);
   app.io.route('client_message',app.io.controller.switch.ping);
 };

@@ -73,7 +73,7 @@ class AlarmDiscovery extends Subscription {
         this.ctx.app.io.emit("alarm", JSON.stringify(alarmData))
       }
        // 写入当前告警数据库
-      this.ctx.service.db.insertAlarmDb(insertTable);
+      // this.ctx.service.db.insertCurrentAlarmDb(insertTable);
     } else { console.log("定时读取的alarm表不为空，但是处理出错？？？？？？？？？？？")}
   }
 }
