@@ -306,17 +306,38 @@ class HomeController extends Controller {
     console.log('get history alarm 结束时间', endstamp)
     // let total = data.total;
     let pageindex = data.pageIndex;
-    let pagesize = data.pageSize;   
-    let station = ''
+    let pagesize = data.pageSize;
+    let station = data.station   
+    // let station = ''
     let datareturn
     let datatotal
+
     if (startstamp !=='') {
-      datatotal = await client.query('SELECT * from power_alarm_history where alarmfiredtime >=' + "'" +  startstamp + "'" + " and alarmfiredtime <= " + "'" + endstamp + "'")
-      datareturn = await client.query('SELECT * from power_alarm_history where alarmfiredtime >=' + "'" +  startstamp + "'" + " and alarmfiredtime <= " + "'" + endstamp  + "'" + " order by alarmfiredtime desc LIMIT " + pagesize +" offset " + (pageindex-1) * pagesize)
-    } else {
-      datatotal = await client.query('SELECT * from power_alarm_history where alarmid >= ' + "'" +  station + "'")
-      datareturn = await client.query('SELECT * from power_alarm_history where alarmid >= ' + "'" +  station + "'" + " order by alarmfiredtime desc LIMIT " + pagesize +" offset " + (pageindex-1) * pagesize)
+      if (station !=='') {
+        datatotal =  await client.query('SELECT * from  power_alarm_history where alarmfiredtime >=' + "'" +  startstamp + "'" + " and alarmfiredtime <= " + "'" + endstamp + "'" + " and alarmmudid = " + "'" + station + "'")
+        datareturn = await client.query('SELECT * from  power_alarm_history where alarmfiredtime >=' + "'" +  startstamp + "'" + " and alarmfiredtime <= " + "'" + endstamp + "'" + " and alarmmudid = " + "'" + station + "'" + " order by alarmfiredtime desc LIMIT " + pagesize +" offset " + (pageindex-1) * pagesize)
+      }  else {
+        datatotal =  await client.query('SELECT * from  power_alarm_history where alarmfiredtime >=' + "'" +  startstamp + "'" + " and alarmfiredtime <= " + "'" + endstamp + "'")
+        datareturn = await client.query('SELECT * from  power_alarm_history where alarmfiredtime >=' + "'" +  startstamp + "'" + " and alarmfiredtime <= " + "'" + endstamp  + "'" + " order by alarmfiredtime desc LIMIT " + pagesize +" offset " + (pageindex-1) * pagesize)
+      }
+    } 
+    else {
+      if (station !=='') {
+        datatotal =  await client.query('SELECT * from  power_alarm_history where alarmmudid =' + "'" + station + "'")
+        datareturn = await client.query('SELECT * from  power_alarm_history where alarmmudid = ' + "'" + station + "'" + " order by alarmfiredtime desc LIMIT " + pagesize +" offset " + (pageindex-1) * pagesize)
+      }  else {
+        datatotal = await client.query('SELECT * from  power_alarm_history where alarmmudid >= ' + "'" +  station + "'")
+        datareturn = await client.query('SELECT * from  power_alarm_history where alarmmudid >= ' + "'" +  station + "'" + " order by alarmfiredtime desc LIMIT " + pagesize +" offset " + (pageindex-1) * pagesize)
+      }
     }
+
+    // if (startstamp !=='') {
+    //   datatotal = await client.query('SELECT * from power_alarm_history where alarmfiredtime >=' + "'" +  startstamp + "'" + " and alarmfiredtime <= " + "'" + endstamp + "'")
+    //   datareturn = await client.query('SELECT * from power_alarm_history where alarmfiredtime >=' + "'" +  startstamp + "'" + " and alarmfiredtime <= " + "'" + endstamp  + "'" + " order by alarmfiredtime desc LIMIT " + pagesize +" offset " + (pageindex-1) * pagesize)
+    // } else {
+    //   datatotal = await client.query('SELECT * from power_alarm_history where alarmid >= ' + "'" +  station + "'")
+    //   datareturn = await client.query('SELECT * from power_alarm_history where alarmid >= ' + "'" +  station + "'" + " order by alarmfiredtime desc LIMIT " + pagesize +" offset " + (pageindex-1) * pagesize)
+    // }
     client.end()
     //end db
     console.log('get history alarm 页 记录', datareturn)

@@ -19,12 +19,12 @@ class DbService extends Service {
     let alarmdetail = request.alarmdetail
     let alarmmudid = request.alarmmudid
     // console.log('request=\n', request)
-    console.log('alarmFiredCheck@@@@@@@@@@ alarmdetail=\n', alarmdetail)
-    console.log('alarmFiredCheck@@@@@@@@@@ alarmmudid=\n', alarmmudid)
+    // console.log('alarmFiredCheck@@@@@@@@@@ alarmdetail=\n', alarmdetail)
+    // console.log('alarmFiredCheck@@@@@@@@@@ alarmmudid=\n', alarmmudid)
     let  data = await client.query('SELECT * from power_alarm_current where alarmdetail =' + "'" +  alarmdetail + "'" + " and alarmmudid = " + "'" + alarmmudid + "'")
     client.end()
     //end db
-    console.log('alarmFiredCheck   db return=\n', data.rows)
+    // console.log('alarmFiredCheck   db return=\n', data.rows)
     return data.rows
   }
   // current alarm del
@@ -84,8 +84,64 @@ class DbService extends Service {
     client.end() 
     return db.rows;
   }
-    //新增alarm记录
-  async insertCurrentAlarmDb(insertAlarm) {
+  //新增data记录
+  async insertDataIntoDB(saveData) {
+  
+    const client = new Client({
+        user: 'postgres',
+        host: '127.0.0.1',
+        database: 'power',
+        password: 'shyh2017',
+        port: 5432,
+    })
+    client.connect() 
+    
+    let insertSql = "insert into power_data_manage (id,catalogid,code,devicetype,mudtype,com,auv,buv,cuv,aov,bov,cov,aoa,boa,coa,afu,bfu,cfu,abcv,av,bv,cv,abca,aa,ba,ca,mainstatus,stabilestatus,stepstatus,syncstatus,autostatus,ipaddress,timestamp,addinfo) \
+      values ("+ "'"+saveData.id+"'"+",\
+              "+ "'"+saveData.catalogid+"'"+",\
+              "+ "'"+saveData.code+"'"+",\
+              "+ "'"+saveData.devicetype+"'"+",\
+              "+ "'"+saveData.mudtype+"'"+",\
+              "+ "'"+saveData.com+"'"+",\
+              "+ "'"+saveData.auv+"'"+",\
+              "+ "'"+saveData.buv+"'"+",\
+              "+ "'"+saveData.cuv+"'"+",\
+              "+ "'"+saveData.aov+"'"+",\
+              "+ "'"+saveData.bov+"'"+",\
+              "+ "'"+saveData.cov+"'"+",\
+              "+ "'"+saveData.aoa+"'"+",\
+              "+ "'"+saveData.boa+"'"+",\
+              "+ "'"+saveData.coa+"'"+",\
+              "+ "'"+saveData.afu+"'"+",\
+              "+ "'"+saveData.bfu+"'"+",\
+              "+ "'"+saveData.cfu+"'"+",\
+              "+ "'"+saveData.abcv+"'"+",\
+              "+ "'"+saveData.av+"'"+",\
+              "+ "'"+saveData.bv+"'"+",\
+              "+ "'"+saveData.cv+"'"+",\
+              "+ "'"+saveData.abca+"'"+",\
+              "+ "'"+saveData.aa+"'"+",\
+              "+ "'"+saveData.ba+"'"+",\
+              "+ "'"+saveData.ca+"'"+",\
+              "+ "'"+saveData.mainstatus+"'"+",\
+              "+ "'"+saveData.stabilestatus+"'"+",\
+              "+ "'"+saveData.stepstatus+"'"+",\
+              "+ "'"+saveData.syncstatus+"'"+",\
+              "+ "'"+saveData.autostatus+"'"+",\
+              "+ "'"+saveData.ipaddress+"'"+",\
+              "+ "'"+saveData.timestamp+"'"+",\
+              "+ "'"+saveData.addinfo+"'"+")";
+    console.log(insertSql);
+    let insertErr = await client.query(insertSql);
+    if (insertErr)
+      console.log("insertDataIntoDB---db服务，新增data数据库记录：",saveData); 
+      else console.log("insertDataIntoDB---db服务，新增data数据库记录失败？？？？？？？：",saveData); 
+    
+    client.end();
+    return insertErr;
+  }
+  //新增alarm记录
+  async insertCurrentAlarmDb(saveData) {
   
     const client = new Client({
         user: 'postgres',
@@ -97,32 +153,32 @@ class DbService extends Service {
     client.connect() 
     
     let insertSql = "insert into power_alarm_current (alarmid,alarmstation,alarmmudid,alarmreceivedtime,alarmfiredtime,alarmdetail,alarmreason,alarmlevel,alarmconfirmedflag,alarmconfirmedtime,alarmconfirmedinfo,alarmrestoreflag,alarmrestoreinfo,alarmsourceip,alarmaddition) \
-      values ("+ "'"+insertAlarm.alarmid+"'"+",\
-              "+ "'"+insertAlarm.alarmstation+"'"+",\
-              "+ "'"+insertAlarm.alarmmudid+"'"+",\
-              "+ "'"+insertAlarm.alarmreceivedtime+"'"+",\
-              "+ "'"+insertAlarm.alarmfiredtime+"'"+",\
-              "+ "'"+insertAlarm.alarmdetail+"'"+",\
-              "+ "'"+insertAlarm.alarmreason+"'"+",\
-              "+ "'"+insertAlarm.alarmlevel+"'"+",\
-              "+ "'"+insertAlarm.alarmconfirmedflag+"'"+",\
-              "+ "'"+insertAlarm.alarmconfirmedtime+"'"+",\
-              "+ "'"+insertAlarm.alarmconfirmedinfo+"'"+",\
-              "+ "'"+insertAlarm.alarmrestoreflag+"'"+",\
-              "+ "'"+insertAlarm.alarmrestoreinfo+"'"+",\
-              "+ "'"+insertAlarm.alarmsourceip+"'"+",\
-              "+ "'"+insertAlarm.alarmaddition+"'"+")";
+      values ("+ "'"+saveData.alarmid+"'"+",\
+              "+ "'"+saveData.alarmstation+"'"+",\
+              "+ "'"+saveData.alarmmudid+"'"+",\
+              "+ "'"+saveData.alarmreceivedtime+"'"+",\
+              "+ "'"+saveData.alarmfiredtime+"'"+",\
+              "+ "'"+saveData.alarmdetail+"'"+",\
+              "+ "'"+saveData.alarmreason+"'"+",\
+              "+ "'"+saveData.alarmlevel+"'"+",\
+              "+ "'"+saveData.alarmconfirmedflag+"'"+",\
+              "+ "'"+saveData.alarmconfirmedtime+"'"+",\
+              "+ "'"+saveData.alarmconfirmedinfo+"'"+",\
+              "+ "'"+saveData.alarmrestoreflag+"'"+",\
+              "+ "'"+saveData.alarmrestoreinfo+"'"+",\
+              "+ "'"+saveData.alarmsourceip+"'"+",\
+              "+ "'"+saveData.alarmaddition+"'"+")";
     console.log(insertSql);
     let insertErr = await client.query(insertSql);
     if (insertErr)
-      console.log("insertCurrentAlarmDb---db服务，新增alarm数据库记录：",insertAlarm); 
-      else console.log("insertCurrentAlarmDb---db服务，新增alarm数据库记录失败？？？？？？？：",insertAlarm); 
+      console.log("insertCurrentAlarmDb---db服务，新增alarm数据库记录：",saveData); 
+      else console.log("insertCurrentAlarmDb---db服务，新增alarm数据库记录失败？？？？？？？：",saveData); 
     
     client.end();
     return insertErr;
   }
   // insert to 历史告警
-  async insertToHistoryAlarmOne(insertAlarm) {
+  async insertToHistoryAlarmOne(saveData) {
     //connect db
     const client = new Client({
       user: 'postgres',
@@ -134,28 +190,28 @@ class DbService extends Service {
     // the pool with emit an error on behalf of any idle clients
     // it contains if a backend error or network partition happens
     client.connect()
-    console.log("---insertToHistoryAlarmOne，新增history alarm数据库记录：",insertAlarm); 
+    console.log("---insertToHistoryAlarmOne，新增history alarm数据库记录：",saveData); 
     let insertSql = "insert into power_alarm_history (alarmid,alarmstation,alarmmudid,alarmreceivedtime,alarmfiredtime,alarmdetail,alarmreason,alarmlevel,alarmconfirmedflag,alarmconfirmedtime,alarmconfirmedinfo,alarmrestoreflag,alarmrestoreinfo,alarmsourceip,alarmaddition) \
-      values ("+ "'"+insertAlarm.alarmid+"'"+",\
-              "+ "'"+insertAlarm.alarmstation+"'"+",\
-              "+ "'"+insertAlarm.alarmmudid+"'"+",\
-              "+ "'"+insertAlarm.alarmreceivedtime+"'"+",\
-              "+ "'"+insertAlarm.alarmfiredtime+"'"+",\
-              "+ "'"+insertAlarm.alarmdetail+"'"+",\
-              "+ "'"+insertAlarm.alarmreason+"'"+",\
-              "+ "'"+insertAlarm.alarmlevel+"'"+",\
-              "+ "'"+insertAlarm.alarmconfirmedflag+"'"+",\
-              "+ "'"+insertAlarm.alarmconfirmedtime+"'"+",\
-              "+ "'"+insertAlarm.alarmconfirmedinfo+"'"+",\
-              "+ "'"+insertAlarm.alarmrestoreflag+"'"+",\
-              "+ "'"+insertAlarm.alarmrestoreinfo+"'"+",\
-              "+ "'"+insertAlarm.alarmsourceip+"'"+",\
-              "+ "'"+insertAlarm.alarmaddition+"'"+")";
+      values ("+ "'"+saveData.alarmid+"'"+",\
+              "+ "'"+saveData.alarmstation+"'"+",\
+              "+ "'"+saveData.alarmmudid+"'"+",\
+              "+ "'"+saveData.alarmreceivedtime+"'"+",\
+              "+ "'"+saveData.alarmfiredtime+"'"+",\
+              "+ "'"+saveData.alarmdetail+"'"+",\
+              "+ "'"+saveData.alarmreason+"'"+",\
+              "+ "'"+saveData.alarmlevel+"'"+",\
+              "+ "'"+saveData.alarmconfirmedflag+"'"+",\
+              "+ "'"+saveData.alarmconfirmedtime+"'"+",\
+              "+ "'"+saveData.alarmconfirmedinfo+"'"+",\
+              "+ "'"+saveData.alarmrestoreflag+"'"+",\
+              "+ "'"+saveData.alarmrestoreinfo+"'"+",\
+              "+ "'"+saveData.alarmsourceip+"'"+",\
+              "+ "'"+saveData.alarmaddition+"'"+")";
     console.log(insertSql);
     let insertErr = await client.query(insertSql);
     if (insertErr)
-      console.log("---insertToHistoryAlarmOne，新增history alarm数据库记录：",insertAlarm); 
-      else console.log("---insertToHistoryAlarmOne，新增alarm历史数据库记录失败？？？？？？？：",insertAlarm); 
+      console.log("---insertToHistoryAlarmOne，新增history alarm数据库记录：",saveData); 
+      else console.log("---insertToHistoryAlarmOne，新增alarm历史数据库记录失败？？？？？？？：",saveData); 
     client.end()
     //end db
     return insertErr

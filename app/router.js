@@ -23,12 +23,14 @@ module.exports = app => {
   router.get('/alarm/current/:alarmid', controller.alarm.getcurrentalarm);
   router.post('/alarm/current/del', controller.alarm.postcurrentalarmdel);
   router.get('/getallhistoryalarmtotol', controller.alarm.getallhistoryalarmtotol);
-  router.post('/alarm/historypage/:catalogid/:alarmtype', controller.alarm.postpagehistoryalarm);
+  router.post('/alarm/historypage/:alarmtype', controller.alarm.postpagehistoryalarm);
   router.post('/alarm/history/add', controller.alarm.inserttohistoryalarm);
   router.post('/alarm/history/update', controller.alarm.posthistoryalarmupdate);
   router.post('/alarm/firedcheck', controller.alarm.postalarmfiredcheck);
   router.post('/alarm/firedinsert', controller.alarm.postalarmfiredinsert);
   router.get('/getallhistoryalarm', controller.alarm.getallhistoryalarm);
+  router.get('/data/getalldatatotol', controller.data.getalldatatotol);
+  router.post('/data/postdatapage', controller.data.postdatapage);
   router.post('/tree/addnode', controller.home.treeaddnode);
   router.post('/tree/delnode', controller.home.treedelnode);
   router.post('/topo/additem', controller.topo.topoadditem);

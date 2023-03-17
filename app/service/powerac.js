@@ -160,6 +160,32 @@ server.on("listening", function () {
 });
 // power ac service
 class PoweracService extends Service {
+  // save data to db
+  async saveAcAbParams() {
+    // 读取设备列表
+    let deviceList = await this.ctx.service.db.getAllAcDeviceList()
+    console.log("saveAcAbParams:从数据库读取的deviceList",deviceList);
+    this.ctx.service.powerac.saveAcAbData(deviceList)
+    return 0
+  }
+  // saveAcAbData
+  async saveAcAbData(list) {
+    for (let i = 0; i < list.length; i++) {
+      let saveData = {}
+      let deviceData = JSON.parse(deviceParams[list[i].catalogid])
+      console.log("saveAcAbData:要插入data数据库的原始设备数据",deviceData)
+      saveData.id = list[i].catalogid + '_' + deviceData.time
+      saveData.catalogid = list[i].catalogid
+      saveData.devicetype = list[i].protocoltype
+      saveData.code = list[i].label
+      saveData.mudtype = '0003'
+      saveData.addinfo = '00'
+      saveData.timestamp = deviceData.time
+      saveData = Object.assign(saveData,deviceData)
+      console.log("saveAcAbData:要插入data数据库的数据",saveData)
+      this.ctx.service.db.insertDataIntoDB(saveData)
+    }
+  }
   // getacparamfromagent
   async getacparamfromagent(catalogid) {
     return deviceParams[catalogid]
@@ -320,12 +346,12 @@ class PoweracService extends Service {
               // 2,在当前告警数据库中删除这条告警
               let alarmid = {
               alarmid: writeData.alarmid
-            }
-            this.ctx.service.db.delCurrentAlarmOne(r[i].alarmid)
-              .then((res) => {
-                console.log('\nagentAlarmRestoreProcess删除当前告警结果:')
-                console.log(res)
-            })
+              }
+              this.ctx.service.db.delCurrentAlarmOne(r[i].alarmid)
+                .then((res) => {
+                  console.log('\nagentAlarmRestoreProcess删除当前告警结果:')
+                  console.log(res)
+              })
           })
         })
       }
@@ -336,7 +362,7 @@ class PoweracService extends Service {
     let a = {}
     let alarmFired = false
     a = JSON.parse(params.result)
-    console.log('告警监测输入的参数______________________________________________\n', a)
+    // console.log('告警监测输入的参数______________________________________________\n', a)
     
     alarmFired = (a.auv=== '00aa') | (a.buv=== '00aa') | (a.cuv=== '00aa') | (a.aov=== '00aa') | (a.bov=== '00aa')| (a.cov=== '00aa') | (a.aoa=== '00aa') | (a.boa=== '00aa')| (a.coa=== '00aa') | (a.afu=== '00aa') | (a.bfu=== '00aa') | (a.cfu=== '00aa') | (a.com=== '00aa')
     let alarmTable0 = []
@@ -366,9 +392,9 @@ class PoweracService extends Service {
         arrayData[12].alarmid = catalogid + '_' + a.time + '_' + arrayData[12].alarmdetail
         arrayData[12].alarmStatus = true
         arrayData[12].time = a.time
-        console.log('com', arrayData[12])
+        // console.log('com', arrayData[12])
         alarmTable0.push(arrayData[12])
-        console.log('com后', alarmTable0)
+        // console.log('com后', alarmTable0)
       }
         else {
           if (a.auv === '00aa') {
@@ -480,18 +506,18 @@ class PoweracService extends Service {
             console.log('cfu后', alarmTable0)
           }
         }
-      console.log('查询到了告警！！！！！！！！！！\n', alarmTable0)
+      // console.log('查询到了告警！！！！！！！！！！\n', alarmTable0)
       this.ctx.service.powerac.alarmTryInsertToDB(alarmTable0)
     }
-    console.log('没有查询到告警\n', alarmTable0)
+    // console.log('没有查询到告警\n', alarmTable0)
   }
   // alarmTryInsertToDB
   async alarmTryInsertToDB(alarmTable) {
-    console.log('enter alarmTryInsertToDB', alarmTable)
+    // console.log('enter alarmTryInsertToDB', alarmTable)
     for (let i = 0; i < alarmTable.length; i++) {
       this.ctx.service.db.alarmFiredCheck(alarmTable[i])
         .then((e)=>{
-          console.log('返回当前已存在的重复当前告警数据库：\n', e, i)
+          // console.log('返回当前已存在的重复当前告警数据库：\n', e, i)
           if (e.length === 0) {
             // 主动上报告警
             console.log('写入当前告警数据库：\n', alarmTable[i])
@@ -507,7 +533,7 @@ class PoweracService extends Service {
   // agentAcProcessCommAlarm
   // agentAcProcess
   async agentAcProcess(l) {
-    console.log('enter agentAcProcess', l)
+    // console.log('enter agentAcProcess', l)
     // 读取设备数据
     let list = l
     let token = 0x04
@@ -587,7 +613,7 @@ class PoweracService extends Service {
   async getAcAbParams() {
     // 读取设备列表
     let deviceList = await this.ctx.service.db.getAllAcDeviceList()
-    console.log("getAcAbParams:从数据库读取的deviceList",deviceList);
+    // console.log("getAcAbParams:从数据库读取的deviceList",deviceList);
     this.ctx.service.powerac.agentAcProcess(deviceList)
     return 0
   }

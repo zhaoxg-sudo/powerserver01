@@ -3,6 +3,7 @@
 
 import 'egg';
 import ExportAlarm = require('../../../app/controller/alarm');
+import ExportData = require('../../../app/controller/data');
 import ExportDefault = require('../../../app/controller/default');
 import ExportDeviceac = require('../../../app/controller/deviceac');
 import ExportDevicelocal = require('../../../app/controller/devicelocal');
@@ -13,6 +14,7 @@ import ExportUser = require('../../../app/controller/user');
 declare module 'egg' {
   interface IController {
     alarm: ExportAlarm;
+    data: ExportData;
     default: ExportDefault;
     deviceac: ExportDeviceac;
     devicelocal: ExportDevicelocal;
